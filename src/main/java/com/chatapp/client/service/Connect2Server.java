@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 /**
+ * client：客户端Socket
  * 与服务器建立连接,并得到输入流与输出流
  */
 public class Connect2Server {

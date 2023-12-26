@@ -16,8 +16,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * 聊天室服务端
- * ServerSocket：服务端
+ * ChatAPP服务端
+ * ServerSocket：服务端Socket
  * Socket（服务端IP，端口号）=> 写在配置文件（socket.properties）中
  */
 public class Server {

@@ -6,8 +6,8 @@ import com.formdev.flatlaf.FlatDarculaLaf;
 import javax.swing.*;
 
 /**
- * 聊天室客户端
- *
+ * ChatAPP客户端
+ * 客户端Socket在Connect2Server
  */
 public class Client {
     public static void main(String[] args) {
