@@ -8,8 +8,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Author:ljl
- * Created:2023/12/19
+ * 通用工具类
  */
 public class CommonUtils {
     private final static int PORT = Integer.parseInt
@@ -26,7 +25,7 @@ public class CommonUtils {
     }
 
     //Json深拷贝.序列化都是深拷贝
-    //序列化与反序列化可以使让我们不用再解析字符串，而是直接获得对象
+    //序列化与反序列化可以不用再解析字符串，而是直接获得对象
     private static final Gson GSON = new GsonBuilder().create();
 
     public static Properties loadProperties(String fileName){

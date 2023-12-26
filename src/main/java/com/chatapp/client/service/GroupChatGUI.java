@@ -11,8 +11,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * Author:ljl
- * Created:2023/12/19
+ * 群聊
  */
 public class GroupChatGUI {
     private JPanel groupChatPan;
@@ -29,7 +28,7 @@ public class GroupChatGUI {
     private Connect2Server connect2Server;
     private PrintStream printStream;
 
-    public GroupChatGUI(UserList friendsList, String groupName,
+    public GroupChatGUI(UserList userList, String groupName,
                         String name, Set<String> userSet, Connect2Server connect2Server) {
         this.myName = name;
         this.groupSet = userSet;
@@ -49,7 +48,7 @@ public class GroupChatGUI {
         while(iterator.hasNext()){
             String groupUserName = iterator.next();
             newGroupLab[i] = new JLabel(groupUserName);
-            newGroupLab[i].addMouseListener(friendsList.new PrivateChat(groupUserName,myName));
+            newGroupLab[i].addMouseListener(userList.new PrivateChat(groupUserName,myName));
             groupSetPan.add(newGroupLab[i]);
             i++;
         }

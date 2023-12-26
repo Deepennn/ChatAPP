@@ -10,8 +10,7 @@ import java.io.PrintStream;
 import java.util.Scanner;
 
 /**
- * Author:ljl
- * Created:2023/12/19
+ * 私聊
  */
 public class PrivateChatGUI {
     private JPanel privateChatPan;
@@ -20,15 +19,15 @@ public class PrivateChatGUI {
     private JTextField sendToServer;
     private JFrame frame;
 
-    private String friendName;
+    private String userName;
     private String myName;
     private Connect2Server connect2Server;
     private PrintStream printStream ;
     private Scanner scanner;
 
-    public PrivateChatGUI(String friendName,String myName,Connect2Server connect2Server) {
+    public PrivateChatGUI(String userName,String myName,Connect2Server connect2Server) {
 
-        this.friendName = friendName;
+        this.userName = userName;
         this.myName = myName;
         this.connect2Server = connect2Server;
         this.printStream = connect2Server.getPrintStream();
@@ -41,7 +40,7 @@ public class PrivateChatGUI {
         frame.setSize(1000,500);
         //唤醒页面
         frame.setVisible(true);
-        title.setText("与"+friendName+"私聊中");
+        title.setText("与"+userName+"私聊中");
 
         sendToServer.addKeyListener(new KeyAdapter() {
             @Override
@@ -53,7 +52,7 @@ public class PrivateChatGUI {
                     MessageVO voPrivate = new MessageVO();
                     voPrivate.setContent(message);
                     voPrivate.setType("2");
-                    voPrivate.setTo(friendName);
+                    voPrivate.setTo(userName);
                     voPrivate.setFrom(myName);
                     String info = CommonUtils.Object2Json(voPrivate);
                     printStream.println(info);
@@ -71,6 +70,6 @@ public class PrivateChatGUI {
     }
 
     public void record(String str){
-        readFromServer.append(" "+friendName+"说："+str+"\n");
+        readFromServer.append(" "+userName+"说："+str+"\n");
     }
 }

@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,13 +16,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Author:ljl
- * Created:2023/12/19
  * 聊天室服务端
  * ServerSocket：服务端
- * Socket（服务端IP，端口号）=》可以写再配置文件中
+ * Socket（服务端IP，端口号）=> 写在配置文件（socket.properties）中
  */
-public class MultiThreadServer {
+public class Server {
     private final static int PORT = CommonUtils.getPORT();
 
     //String为姓名  缓存在线用户  线程安全
@@ -33,13 +32,15 @@ public class MultiThreadServer {
 
     public static void main(String[] args) {
         try {
+            //创建一个ServerSocket实例，在指定的端口上等待客户端连接。
             ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.println("服务器启动，等待客户端连接。。。");
-            ExecutorService executorService = Executors.newFixedThreadPool(50);
-            for(int i = 0;i<50;i++){
+            ExecutorService executorService = Executors.newFixedThreadPool(50); // 最大50个线程的线程池
+            for(int i = 0; i<50; i++){ // while (true)
+                // accept()会一直阻塞当前线程，直到有客户端发起连接，才返回一个新的与客户端进行通信的Socket对象。
                 Socket socket = serverSocket.accept();
                 System.out.println("有新的连接，端口号为"+socket.getPort());
-                executorService.submit(new MultiThreadServer().new ExecutorServer(socket));
+                executorService.submit(new Server().new ExecutorServer(socket)); // 将连接的Socket交给线程池的一个线程来处理
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -47,11 +48,10 @@ public class MultiThreadServer {
     }
 
     class ExecutorServer implements Runnable{
-        private final Socket client;
-        //输入流，读数据
-        private Scanner scanner;
-        //输出流，写数据
-        private PrintStream printStream;
+        private final Socket client; // 服务每个用户的服务socket
+        // 每个与用户交互的Stream
+        private Scanner scanner;//输入流，读数据
+        private PrintStream printStream; //输出流，写数据
 
         public ExecutorServer(Socket client) {
             this.client = client;
@@ -107,7 +107,7 @@ public class MultiThreadServer {
                         voToGroup.setTo(to);
                         send(CommonUtils.Object2Json(voToGroup),groupMap.get(to));
                     }else if(type.equals("4")){
-                        //退出
+                        //退出应用
                         MessageVO voExitInfo = new MessageVO();
                         voExitInfo.setType("11");
                         voExitInfo.setFrom(from);
@@ -131,6 +131,19 @@ public class MultiThreadServer {
                             voCreateGroup.setTo(to);
                             voCreateGroup.setFrom(from);
                             send(CommonUtils.Object2Json(voCreateGroup),userNameSet);
+                        }
+                    }else if(type.equals("12")){
+                        //退出群组
+                        Set<String> groupNameSet = (Set<String>)CommonUtils.Json2Object(content,Set.class);
+                        for(String groupName : groupNameSet){
+                            Set<String> groupMemberSet = groupMap.get(groupName);
+                            MessageVO voExitGroup = new MessageVO();
+                            voExitGroup.setType("13");
+                            voExitGroup.setContent(groupName);//群名
+                            voExitGroup.setTo(CommonUtils.Object2Json(groupMemberSet));
+                            voExitGroup.setFrom(from);
+                            send(CommonUtils.Object2Json(voExitGroup),groupMemberSet);
+                            groupMemberSet.remove(from);
                         }
                     }
                 }
@@ -159,7 +172,7 @@ public class MultiThreadServer {
         private void sendAll(String message,String name){
             //Set<Map.Entry<K,V>> entrySet();
             for(Map.Entry<String,PrintStream> entry : printStreamMap.entrySet()){
-                if(entry.getKey()!=name){
+                if(!Objects.equals(entry.getKey(), name)){
                     entry.getValue().println(message);
                 }
             }

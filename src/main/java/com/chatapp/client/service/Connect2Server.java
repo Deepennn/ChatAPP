@@ -8,8 +8,6 @@ import java.net.Socket;
 import java.util.Scanner;
 
 /**
- * Author:ljl
- * Created:2023/12/19
  * 与服务器建立连接,并得到输入流与输出流
  */
 public class Connect2Server {
@@ -23,7 +21,7 @@ public class Connect2Server {
 
     public Connect2Server() {
         try {
-            this.client = new Socket(IP,PORT);
+            this.client = new Socket(IP,PORT); // 客户端Socket
             scanner = new Scanner(client.getInputStream());
             printStream = new PrintStream(client.getOutputStream(),true,"UTF-8");
         } catch (IOException e) {

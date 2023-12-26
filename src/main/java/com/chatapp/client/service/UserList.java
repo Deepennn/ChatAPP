@@ -16,8 +16,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Author:ljl
- * Created:2023/12/19
+ * 联系人、群聊列表
  */
 public class UserList {
     private JPanel userPan;
@@ -27,6 +26,7 @@ public class UserList {
     private JScrollPane groupPan;
     private JButton createGroupBut;
     private JButton exitBut;
+    private JButton exitGroupBut;
     private JFrame frame;
 
     private String name;
@@ -43,12 +43,12 @@ public class UserList {
         groupMap.put(groupName,selectUserSet);
     }
 
-    public UserList(String name, Set<String> userSet, Connect2Server connect2Server, JFrame friendListframe) {
+    public UserList(String name, Set<String> userSet, Connect2Server connect2Server, JFrame userListframe) {
         this.name = name;
         this.userSet = userSet;
         this.connect2Server =connect2Server;
 
-        friendListframe.dispose();
+        userListframe.dispose();
         frame = new JFrame(name+"的联系人列表");
         frame.setContentPane(userPan);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -73,6 +73,12 @@ public class UserList {
                 new CreateGroup(name,userSet,connect2Server, UserList.this);
             }
         });
+        exitGroupBut.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new ExitGroup(name,groupMap,connect2Server, UserList.this);
+            }
+        });
         exitBut.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -89,30 +95,30 @@ public class UserList {
     //加载用户列表
     private void userLoad(){
         //新建标签数组，将其放入滚动用户列表中
-        JLabel[] newFirendsLab = new JLabel[userSet.size()];
-        JPanel newFriendsPan = new JPanel();
+        JLabel[] newUserLab = new JLabel[userSet.size()];
+        JPanel newUserPan = new JPanel();
 
         //setLayout()设置布局
-        //new BoxLayout(nfriendsPan,BoxLayout.Y_AXIS) 盒子布局，
+        //new BoxLayout(userPan,BoxLayout.Y_AXIS) 盒子布局，
         // 第一个参数：那个地方，第二个参数：BoxLayout.Y_AXIS代表垂直方向
-        newFriendsPan.setLayout(new BoxLayout(newFriendsPan,BoxLayout.Y_AXIS));
+        newUserPan.setLayout(new BoxLayout(newUserPan,BoxLayout.Y_AXIS));
         Iterator<String> iterator = userSet.iterator();
         int i = 0;
         while(iterator.hasNext()){
-            String friendName = iterator.next();
-            newFirendsLab[i] = new JLabel(friendName);
+            String userName = iterator.next();
+            newUserLab[i] = new JLabel(userName);
             //将每个标签数组添加到用户panel中
-            newFriendsPan.add(newFirendsLab[i]);
+            newUserPan.add(newUserLab[i]);
             //添加鼠标点击事件  name:传入自己的名字
-            newFirendsLab[i].addMouseListener(new PrivateChat(friendName,name));
+            newUserLab[i].addMouseListener(new PrivateChat(userName,name));
             i++;
         }
-        //设置朋友滚动盘子的布局,将朋友panel加到滚动朋友panel中
-        userListPan.setViewportView(newFriendsPan);
+        //设置联系人滚动盘子的布局,将联系人panel加到滚动联系人panel中
+        userListPan.setViewportView(newUserPan);
         //设置滚动条向垂直动
         userListPan.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         //revalidate()：刷新
-        newFriendsPan.revalidate();
+        newUserPan.revalidate();
         userListPan.revalidate();
     }
 
@@ -205,7 +211,17 @@ public class UserList {
                         groupMap.put(content,groupSet);
                         groupLoad();
                     }
-
+                }else if(type.equals("13")){
+                    String message;
+                    if (from.equals(name)){
+                        message = "您已退出群组: " + content;
+                        groupMap.remove(content);
+                        groupLoad();
+                    }else{
+                        message = from + "已退出群组: " + content;
+                    }
+                    JOptionPane.showMessageDialog(frame, message,
+                            "退出群组提示", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         }
@@ -213,11 +229,11 @@ public class UserList {
 
     class PrivateChat implements MouseListener{
 
-        private String friendName;
+        private String userName;
         private String myName;
 
-        public PrivateChat(String friendName,String myName){
-            this.friendName = friendName;
+        public PrivateChat(String userName,String myName){
+            this.userName = userName;
             this.myName = myName;
         }
 
@@ -226,13 +242,13 @@ public class UserList {
         public void mouseClicked(MouseEvent e) {
             // 判断用户列表私聊界面缓存是否已经有指定标签
             Set<String> userSet = privateChatGUIMap.keySet();
-            if(userSet.contains(friendName)){
-                PrivateChatGUI privateChatGUI = privateChatGUIMap.get(friendName);
+            if(userSet.contains(userName)){
+                PrivateChatGUI privateChatGUI = privateChatGUIMap.get(userName);
                 privateChatGUI.getFrame().setVisible(true);
             }else{
-                PrivateChatGUI privateChatGUI =new PrivateChatGUI(friendName,myName,connect2Server);
+                PrivateChatGUI privateChatGUI =new PrivateChatGUI(userName,myName,connect2Server);
                 privateChatGUI.getFrame().setVisible(true);
-                privateChatGUIMap.put(friendName,privateChatGUI);
+                privateChatGUIMap.put(userName,privateChatGUI);
             }
         }
 

@@ -1,6 +1,5 @@
 package com.chatapp.client.service;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
 import com.chatapp.client.dao.AccountDao;
 import com.chatapp.client.entity.User;
 import com.chatapp.util.CommonUtils;
@@ -14,8 +13,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 /**
- * Author:ljl
- * Created:2023/12/19
+ * 登录
  */
 public class Log {
     private JPanel login;
@@ -109,14 +107,5 @@ public class Log {
             return false;
         }
 
-    }
-
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(new FlatDarculaLaf());
-        } catch (Exception e) {
-            return;
-        }
-        new Log();
     }
 }
