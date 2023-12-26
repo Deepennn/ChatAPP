@@ -34,7 +34,7 @@ public class AccountDao {
         return null;
     }
 
-    //登陆（在这里等价注册）时插入用户
+    //登陆（在这里等价注册）新用户插入数据库
     public boolean reg(User user)  {
         System.out.println(user.toString());
         Connection connection = this.getConnection();
@@ -57,7 +57,7 @@ public class AccountDao {
         return false;
     }
 
-    //登陆（在这里等价注册）——新用户插入数据库
+    //登陆（在这里等价注册）新用户插入数据库后关闭资源
     private void closeResources(Connection connection,Statement statement) {
         try {
             statement.close();
